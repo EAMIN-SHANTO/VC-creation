@@ -1,0 +1,23 @@
+{
+  "name": "vc-creation",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@veramo/core": "latest",
+    "@veramo/credential-w3c": "latest",
+    "@veramo/data-store": "latest",
+    "@veramo/did-manager": "latest",
+    "@veramo/did-provider-key": "latest",
+    "@veramo/did-resolver": "latest",
+    "@veramo/key-manager": "latest",
+    "@veramo/kms-local": "latest",
+    "@veramo/utils": "latest",
+    "did-resolver": "^4.1.0",
+    "key-did-provider-ed25519": "latest",
+    "key-did-resolver": "latest"
+  }
+}
