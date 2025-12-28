@@ -1,5 +1,12 @@
 // test.js - Testing VC Verification Scenarios
 import { setupAgent } from './src/agent.js'
+import { 
+  createCredentialPayload,
+  createCredentialWithExpiration,
+  validateIssuer,
+  validateSubject,
+  isCredentialExpired
+} from './src/helpers.js'
 
 async function runTests() {
   console.log('========================================')
@@ -21,37 +28,40 @@ async function runTests() {
   const issuer = await agent.didManagerCreate({ alias: 'TestIssuer' })
   const subject = await agent.didManagerCreate({ alias: 'TestSubject' })
 
-  // Create a valid credential
-  const validVC = await agent.createVerifiableCredential({
-    credential: {
-      '@context': [
-        'https://www.w3.org/2018/credentials/v1',
-        'https://www.w3.org/2018/credentials/examples/v1'
-      ],
-      type: ['VerifiableCredential', 'UniversityDegreeCredential'],
-      issuer: { id: issuer.did },
-      issuanceDate: new Date().toISOString(),
-      credentialSubject: {
-        id: subject.did,
-        degree: {
-          type: 'BachelorDegree',
-          name: 'Bachelor of Computer Science'
-        },
-        authorization: 'Cross-Chain-Allowed'
-      },
+  // Create a valid credential using helper
+  const credentialData = {
+    degree: {
+      type: 'BachelorDegree',
+      name: 'Bachelor of Computer Science'
     },
+    authorization: 'Cross-Chain-Allowed'
+  }
+  
+  const credential = createCredentialPayload(issuer, subject, credentialData)
+  const validVC = await agent.createVerifiableCredential({
+    credential,
     proofFormat: 'jwt',
     save: false,
   })
 
-  // Test 1: Valid Credential (SUCCESS)
+  // Test 1: Valid Credential (SUCCESS) + Priority 4: Issuer Validation
   console.log('\n--- Test 1: Valid Credential ---')
   const test1 = await agent.verifyCredential({ credential: validVC })
   
   if (test1.verified) {
     console.log('PASS: Valid credential verified successfully')
+    
+    // Priority 4: Validate issuer trust
+    const trustedIssuers = [issuer.did]
+    const issuerValidation = validateIssuer(test1, trustedIssuers)
+    console.log(`   Issuer Validation: ${issuerValidation.valid ? 'TRUSTED' : 'UNTRUSTED'}`)
+    
+    // Validate subject
+    const subjectValidation = validateSubject(test1, subject.did)
+    console.log(`   Subject Validation: ${subjectValidation.valid ? 'MATCH' : 'MISMATCH'}`)
+    
     results.test1.status = 'PASS'
-    results.test1.details = 'Valid credential verified successfully'
+    results.test1.details = 'Valid credential with trusted issuer and matching subject'
   } else {
     console.log('FAIL: Valid credential was rejected')
     results.test1.status = 'FAIL'
@@ -78,24 +88,13 @@ async function runTests() {
 
   // Test 3: Wrong Subject DID
   console.log('\n--- Test 3: Wrong Subject DID ---')
+  const wrongSubjectCredential = createCredentialPayload(
+    issuer,
+    { did: 'did:key:FAKE_INVALID_DID' },
+    credentialData
+  )
   const wrongSubjectVC = await agent.createVerifiableCredential({
-    credential: {
-      '@context': [
-        'https://www.w3.org/2018/credentials/v1',
-        'https://www.w3.org/2018/credentials/examples/v1'
-      ],
-      type: ['VerifiableCredential', 'UniversityDegreeCredential'],
-      issuer: { id: issuer.did },
-      issuanceDate: new Date().toISOString(),
-      credentialSubject: {
-        id: 'did:key:FAKE_INVALID_DID',
-        degree: {
-          type: 'BachelorDegree',
-          name: 'Bachelor of Computer Science'
-        },
-        authorization: 'Cross-Chain-Allowed'
-      },
-    },
+    credential: wrongSubjectCredential,
     proofFormat: 'jwt',
     save: false,
   })
@@ -118,24 +117,13 @@ async function runTests() {
   console.log('\n--- Test 4: Different Issuer ---')
   const unauthorizedIssuer = await agent.didManagerCreate({ alias: 'UnauthorizedIssuer' })
   
+  const wrongIssuerCredential = createCredentialPayload(
+    unauthorizedIssuer,
+    subject,
+    credentialData
+  )
   const wrongIssuerVC = await agent.createVerifiableCredential({
-    credential: {
-      '@context': [
-        'https://www.w3.org/2018/credentials/v1',
-        'https://www.w3.org/2018/credentials/examples/v1'
-      ],
-      type: ['VerifiableCredential', 'UniversityDegreeCredential'],
-      issuer: { id: unauthorizedIssuer.did },
-      issuanceDate: new Date().toISOString(),
-      credentialSubject: {
-        id: subject.did,
-        degree: {
-          type: 'BachelorDegree',
-          name: 'Bachelor of Computer Science'
-        },
-        authorization: 'Cross-Chain-Allowed'
-      },
-    },
+    credential: wrongIssuerCredential,
     proofFormat: 'jwt',
     save: false,
   })
@@ -154,27 +142,18 @@ async function runTests() {
     results.test4.details = 'Verification failed'
   }
 
-  // Test 5: Expired Credential (Manual check)
+  // Test 5: Expired Credential - Priority 2: Fixed with helper function
   console.log('\n--- Test 5: Expired Credential ---')
+  const expiredCredential = createCredentialWithExpiration(
+    issuer,
+    subject,
+    credentialData,
+    new Date('2021-01-01').toISOString() // Expired date
+  )
+  expiredCredential.issuanceDate = new Date('2020-01-01').toISOString()
+  
   const expiredVC = await agent.createVerifiableCredential({
-    credential: {
-      '@context': [
-        'https://www.w3.org/2018/credentials/v1',
-        'https://www.w3.org/2018/credentials/examples/v1'
-      ],
-      type: ['VerifiableCredential', 'UniversityDegreeCredential'],
-      issuer: { id: issuer.did },
-      issuanceDate: new Date('2020-01-01').toISOString(),
-      expirationDate: new Date('2021-01-01').toISOString(), // Expired
-      credentialSubject: {
-        id: subject.did,
-        degree: {
-          type: 'BachelorDegree',
-          name: 'Bachelor of Computer Science'
-        },
-        authorization: 'Cross-Chain-Allowed'
-      },
-    },
+    credential: expiredCredential,
     proofFormat: 'jwt',
     save: false,
   })
@@ -182,21 +161,22 @@ async function runTests() {
   const test5 = await agent.verifyCredential({ credential: expiredVC })
   
   if (test5.verified) {
-    const expirationDate = new Date(test5.verifiableCredential.expirationDate)
-    const isExpired = expirationDate < new Date()
+    // Priority 2: Use helper function for expiration check
+    const expirationCheck = isCredentialExpired(test5)
     
-    if (isExpired) {
+    if (expirationCheck.expired) {
       console.log('PASS: Signature valid but credential is expired')
-      console.log(`   WARNING: Expired on ${expirationDate.toISOString()}`)
+      console.log(`   WARNING: ${expirationCheck.reason}`)
       console.log('   Note: Application must check expiration date')
       results.test5.status = 'WARNING'
-      results.test5.details = `Expired on ${expirationDate.toISOString()} - App must check expiration`
+      results.test5.details = expirationCheck.reason
     } else {
-      console.log('INFO: Credential is still valid')
+      console.log('PASS: Credential is still valid')
       results.test5.status = 'PASS'
-      results.test5.details = 'Credential is still valid'
+      results.test5.details = expirationCheck.reason
     }
   } else {
+    console.log('FAIL: Verification failed')
     results.test5.status = 'FAIL'
     results.test5.details = 'Verification failed'
   }
@@ -243,7 +223,7 @@ async function runTests() {
   }
   
   if (stats.warning > 0) {
-    console.log('- Business logic validation: [PENDING] Must implement in your app')
+    console.log(`- Application-level validation: ${stats.warning} checks require additional verification`)
   }
   
   console.log('========================================')

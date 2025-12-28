@@ -3,21 +3,20 @@
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
+  "description": "Off-chain Verifiable Credential creation and verification for cross-chain authentication thesis",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "test": "node test.js"
   },
   "dependencies": {
-    "@veramo/core": "latest",
-    "@veramo/credential-w3c": "latest",
-    "@veramo/data-store": "latest",
-    "@veramo/did-manager": "latest",
-    "@veramo/did-provider-key": "latest",
-    "@veramo/did-resolver": "latest",
-    "@veramo/key-manager": "latest",
-    "@veramo/kms-local": "latest",
-    "@veramo/utils": "latest",
+    "@veramo/core": "^6.0.0",
+    "@veramo/credential-w3c": "^6.0.0",
+    "@veramo/did-manager": "^6.0.0",
+    "@veramo/did-provider-key": "^6.0.0",
+    "@veramo/did-resolver": "^6.0.0",
+    "@veramo/key-manager": "^6.0.0",
+    "@veramo/kms-local": "^6.0.0",
     "did-resolver": "^4.1.0",
-    "key-did-provider-ed25519": "latest",
-    "key-did-resolver": "latest"
+    "key-did-resolver": "^3.0.0"
   }
 }

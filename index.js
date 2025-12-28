@@ -1,5 +1,10 @@
 // index.js
 import { setupAgent } from './src/agent.js'
+import { 
+  createCredentialPayload, 
+  exportCredentialJWT, 
+  importCredentialFromJWT 
+} from './src/helpers.js'
 
 async function main() {
   // 1. Start the Agent
@@ -24,31 +29,29 @@ async function main() {
 
   // 4. Create the Verifiable Credential (VC)
   console.log('\n--- 3. Issuing Credential ---')
-  const vc = await agent.createVerifiableCredential({
-    credential: {
-      '@context': [
-        'https://www.w3.org/2018/credentials/v1',
-        'https://www.w3.org/2018/credentials/examples/v1'
-      ],
-      type: ['VerifiableCredential', 'UniversityDegreeCredential'],
-      issuer: { id: issuer.did },
-      issuanceDate: new Date().toISOString(),
-      credentialSubject: {
-        id: subject.did,
-        degree: {
-          type: 'BachelorDegree',
-          name: 'Bachelor of Computer Science'
-        },
-        authorization: 'Cross-Chain-Allowed' // Custom field for your thesis
-      },
+  const credentialData = {
+    degree: {
+      type: 'BachelorDegree',
+      name: 'Bachelor of Computer Science'
     },
+    authorization: 'Cross-Chain-Allowed' // Custom field for your thesis
+  }
+  
+  const credential = createCredentialPayload(issuer, subject, credentialData)
+  
+  const vc = await agent.createVerifiableCredential({
+    credential,
     proofFormat: 'jwt',
     save: false,
   })
 
   console.log('Credential Created (JWT Format):')
-  // We print a shortened version to keep the console clean
-  console.log(vc.proof.jwt.substring(0, 50) + '...') 
+  console.log(vc.proof.jwt.substring(0, 50) + '...')
+  
+  // Priority 1: Export JWT for cross-chain sharing
+  const jwtToken = exportCredentialJWT(vc)
+  console.log('\nExported JWT Token (for cross-chain transfer):')
+  console.log('Length:', jwtToken.length, 'characters') 
 
   // 5. Verify the Credential
   console.log('\n--- 4. Verifying Credential ---')
@@ -64,6 +67,20 @@ async function main() {
   } else {
     console.log('FAILURE: Credential is Invalid.')
     console.log(verification.error)
+  }
+
+  // 7. Test JWT Import and Re-verification
+  console.log('\n--- 5. Testing JWT Import ---')
+  const importedCredential = importCredentialFromJWT(jwtToken)
+  const reVerification = await agent.verifyCredential({
+    credential: importedCredential,
+  })
+  
+  if (reVerification.verified) {
+    console.log('SUCCESS: Imported JWT credential verified!')
+    console.log('This JWT can be shared across blockchains')
+  } else {
+    console.log('FAILURE: Imported credential failed verification')
   }
 
   console.log('\n========================================')
