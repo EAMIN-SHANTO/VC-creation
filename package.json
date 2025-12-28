@@ -6,7 +6,9 @@
   "description": "Off-chain Verifiable Credential creation and verification for cross-chain authentication thesis",
   "scripts": {
     "start": "node index.js",
-    "test": "node test.js"
+    "test": "node test.js",
+    "generate": "node cli.js generate",
+    "verify": "node cli.js verify"
   },
   "dependencies": {
     "@veramo/core": "^6.0.0",
