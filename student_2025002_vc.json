@@ -1,0 +1,35 @@
+{
+  "issuer": {
+    "id": "did:key:z6MkkrtNC7wpQEzKTSzHRM3UZcM9jZYEmeU7oVvTchLrbHSq",
+    "name": "Example University"
+  },
+  "credentialSubject": {
+    "name": "Bob Smith",
+    "title": "Electrical Engineering",
+    "description": "Bob Smith is a student of the Electrical Engineering program",
+    "dateOfIssue": "2026-01-03",
+    "expiryDate": "2027-01-03T19:32:57.199Z",
+    "directedBy": "Example University",
+    "location": "University Campus",
+    "id": "urn:university:student:2025002"
+  },
+  "id": "urn:credential:2025002-1767468777199",
+  "type": [
+    "VerifiableCredential",
+    "UniversityCardCredential"
+  ],
+  "credentialStatus": {
+    "id": "https://university.edu/credentials/status/2025002",
+    "type": "StudentCredentialStatusList2025"
+  },
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://www.w3.org/2018/credentials/examples/v1"
+  ],
+  "issuanceDate": "2026-01-03T19:32:57.000Z",
+  "expirationDate": "2027-01-03T19:32:57.000Z",
+  "proof": {
+    "type": "JwtProof2020",
+    "jwt": "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3OTkwMDQ3NzcsInZjIjp7IkBjb250ZXh0IjpbImh0dHBzOi8vd3d3LnczLm9yZy8yMDE4L2NyZWRlbnRpYWxzL3YxIiwiaHR0cHM6Ly93d3cudzMub3JnLzIwMTgvY3JlZGVudGlhbHMvZXhhbXBsZXMvdjEiXSwidHlwZSI6WyJWZXJpZmlhYmxlQ3JlZGVudGlhbCIsIlVuaXZlcnNpdHlDYXJkQ3JlZGVudGlhbCJdLCJjcmVkZW50aWFsU3ViamVjdCI6eyJuYW1lIjoiQm9iIFNtaXRoIiwidGl0bGUiOiJFbGVjdHJpY2FsIEVuZ2luZWVyaW5nIiwiZGVzY3JpcHRpb24iOiJCb2IgU21pdGggaXMgYSBzdHVkZW50IG9mIHRoZSBFbGVjdHJpY2FsIEVuZ2luZWVyaW5nIHByb2dyYW0iLCJkYXRlT2ZJc3N1ZSI6IjIwMjYtMDEtMDMiLCJleHBpcnlEYXRlIjoiMjAyNy0wMS0wM1QxOTozMjo1Ny4xOTlaIiwiZGlyZWN0ZWRCeSI6IkV4YW1wbGUgVW5pdmVyc2l0eSIsImxvY2F0aW9uIjoiVW5pdmVyc2l0eSBDYW1wdXMifSwiY3JlZGVudGlhbFN0YXR1cyI6eyJpZCI6Imh0dHBzOi8vdW5pdmVyc2l0eS5lZHUvY3JlZGVudGlhbHMvc3RhdHVzLzIwMjUwMDIiLCJ0eXBlIjoiU3R1ZGVudENyZWRlbnRpYWxTdGF0dXNMaXN0MjAyNSJ9fSwiaXNzdWVyIjp7Im5hbWUiOiJFeGFtcGxlIFVuaXZlcnNpdHkifSwic3ViIjoidXJuOnVuaXZlcnNpdHk6c3R1ZGVudDoyMDI1MDAyIiwianRpIjoidXJuOmNyZWRlbnRpYWw6MjAyNTAwMi0xNzY3NDY4Nzc3MTk5IiwibmJmIjoxNzY3NDY4Nzc3LCJpc3MiOiJkaWQ6a2V5Ono2TWtrcnROQzd3cFFFektUU3pIUk0zVVpjTTlqWllFbWVVN29WdlRjaExyYkhTcSJ9.jRc9IEW_g1SPXp5ewEFR5tERGt9G9mr1Jiezp3GYWIF9pzJc6IPTT1yW30gf1hNe-wxyT-q4nsKNoL0P6laEBw"
+  }
+}
