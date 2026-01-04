@@ -7,7 +7,7 @@ import { CredentialPlugin } from '@veramo/credential-w3c'
 import { DIDResolverPlugin } from '@veramo/did-resolver'
 import { KeyDIDProvider } from '@veramo/did-provider-key'
 import { getResolver as getKeyResolver } from 'key-did-resolver'
-import { Resolver } from 'did-resolver' // <--- 1. NEW IMPORT
+import { Resolver } from 'did-resolver'
 
 export const setupAgent = () => {
   return createAgent({
@@ -28,7 +28,7 @@ export const setupAgent = () => {
         },
       }),
       new DIDResolverPlugin({
-        // 2. FIXED: We wrap the list of resolvers in the formal "Resolver" class
+        // "Resolver" class
         resolver: new Resolver({
           ...getKeyResolver(),
         }),

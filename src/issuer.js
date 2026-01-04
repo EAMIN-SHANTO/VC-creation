@@ -18,8 +18,8 @@ export async function getOrCreateIssuer(agent) {
   const savedIssuer = loadIssuerKey()
   
   if (savedIssuer) {
-    console.log('✓ Using existing issuer identity')
-    console.log(`  DID: ${savedIssuer.did}`)
+    console.log('Using existing issuer identity')
+    console.log(`DID: ${savedIssuer.did}`)
     
     // Import key from saved seed to recreate same DID
     try {
@@ -216,9 +216,9 @@ export function revokeStudentCredential(studentId) {
   const result = updateVCStatus(studentId, 'revoked')
   
   if (result) {
-    console.log(`✓ Revoked credential for student: ${studentId}`)
+    console.log(`Revoked credential for student: ${studentId}`)
   } else {
-    console.log(`✗ Credential not found for student: ${studentId}`)
+    console.log(`Credential not found for student: ${studentId}!!!`)
   }
   
   return result

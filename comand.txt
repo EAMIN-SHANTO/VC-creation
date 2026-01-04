@@ -1,0 +1,5 @@
+cd "/Users/eamin/Documents/THESIS/CODES/VC creation" && node batch-issue.js
+
+cat .storage/credentials/21301429.json
+
+node issue.js verify 21301429

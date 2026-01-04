@@ -16,8 +16,8 @@ function seedToPrivateKey(seed) {
 }
 
 /**
- * Get or create the fixed university issuer
- * Always returns the same DID because it uses a fixed seed and imports the same key
+ * Getthe fixed university issuer
+ * Always returns the same DID 
  */
 export async function getFixedIssuer(agent) {
   const savedIssuer = loadIssuerKey()
@@ -29,8 +29,7 @@ export async function getFixedIssuer(agent) {
     type: 'Ed25519',
     privateKeyHex: privateKeyHex
   }).catch(async (error) => {
-    // Key might already exist, try to get it
-    // Since we can't query by private key, we need to create a DID and use its key
+    
     return null
   })
   
@@ -38,7 +37,7 @@ export async function getFixedIssuer(agent) {
     console.log('✓ Using fixed university issuer')
     console.log(`  DID: ${savedIssuer.did}`)
     
-    // Try to import the DID with the key
+    // import the DID with the key
     try {
       const issuer = await agent.didManagerImport({
         did: savedIssuer.did,
@@ -77,9 +76,9 @@ export async function getFixedIssuer(agent) {
     note: 'Fixed issuer - DID will be reused for all credentials'
   })
   
-  console.log('✓ Fixed issuer initialized')
-  console.log(`  DID: ${issuer.did}`)
-  console.log('  This DID will be used for all future credentials')
+  console.log('Fixed issuer initialized')
+  console.log(`DID: ${issuer.did}`)
+  console.log('This DID will be used for all future credentials')
   
   return issuer
 }

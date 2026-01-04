@@ -48,7 +48,13 @@ const students = [
     name: 'Grace Wilson', 
     title: 'Biomedical Engineering',
     description: 'Grace Wilson is a student of the Biomedical Engineering program'
+  }, 
+  {studentId:'21301429', 
+    name: 'Md Eamin', 
+    title: 'CSE',
+    description: 'Md Eamin is a student of the CSE program'
   }
+
 ]
 
 async function batchIssue() {
